@@ -17,11 +17,11 @@
     "lintFix": "eslint src/express test --fix --ignore-path .gitignore"
   },
   "keywords": [],
-  "author": [
-    "Brent Kirkland <brent@bitfinex.com>",
-    "Rama McIntosh <rama@bitfinex.com>"
+  "maintainers": [
+    { "name": "brentkirkland", "email": "<brent@bitfinex.com>"},
+    { "name": "face", "email": "<rama@bitfinex.com>"}
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
