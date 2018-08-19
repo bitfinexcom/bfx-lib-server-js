@@ -17,6 +17,10 @@
     "lintFix": "eslint src/express test --fix --ignore-path .gitignore"
   },
   "keywords": [],
+  "authors": [
+    { "name": "brentkirkland", "email": "<brent@bitfinex.com>"},
+    { "name": "face", "email": "<rama@bitfinex.com>" }
+  ],
   "maintainers": [
     { "name": "brentkirkland", "email": "<brent@bitfinex.com>"},
     { "name": "face", "email": "<rama@bitfinex.com>"}
