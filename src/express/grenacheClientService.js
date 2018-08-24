@@ -4,20 +4,19 @@ const _ = require('lodash')
 const sanitaze = require('./validate')
 const { parseTokenIp, getIp } = require('./helpers')
 
+const { grape, uploadActions } = require('./config')
+
 const Peer = Grenache.PeerRPCClient
 
-let peer = null
-const grenacheInit = (conf) => {
-  const link = new Link({
-    grape: conf.grape
-  })
-  link.start()
+const link = new Link({
+  grape: grape
+})
+link.start()
 
-  peer = new Peer(link, {})
-  peer.init()
-}
+const peer = new Peer(link, {})
+peer.init()
 
-function request(service, query, res) {
+function request (query, res, service) {
   query = sanitaze(query)
   const timeout = _timeout(query.action)
   peer.request(service, query, timeout, (err, data) => ((err)
@@ -25,44 +24,51 @@ function request(service, query, res) {
     : res.json({ success: true, data })))
 }
 
-function _timeout(action) {
+function _timeout (action) {
   const timeout = uploadActions(action) ? 120000 : 10000
   return { timeout }
 }
 
-function setGrenacheRequest(service, action, extra) {
+function setGrenacheRequest (action, extra, service) {
   return (req, res) => {
     const add = (extra)
       ? extra(req)
       : {}
     const args = [_.assign({}, req.query, req.body, add)]
     const query = { action, args }
-    request(service, query, res)
+    request(query, res, service)
   }
 }
 
 // Types of requests
-function getGrenacheReqWithAuth(service, action, collection) {
+function getGrenacheReqWithAuth (action, collection, service) {
   const setExtra = (req) => {
     const auth = parseTokenIp(req)
     return (collection)
       ? { auth, collection }
       : { auth }
   }
-  return setGrenacheRequest(service, action, setExtra)
+  return setGrenacheRequest(action, setExtra, service)
 }
 
-function getGrenacheReqWithIp(service, action) {
+function getGrenacheReqWithIp (action, service) {
   const setIp = (req) => {
     const ip = getIp(req)
     return { ip }
   }
-  return setGrenacheRequest(service, action, setIp)
+  return setGrenacheRequest(action, setIp, service)
+}
+
+function getGrenacheReq (action, args, service) {
+  return (req, res) => {
+    const query = { action, args }
+    request(query, res, service)
+  }
 }
 
 module.exports = {
-  grenacheInit,
   setGrenacheRequest,
   getGrenacheReqWithAuth,
   getGrenacheReqWithIp,
+  getGrenacheReq
 }
