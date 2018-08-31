@@ -34,6 +34,9 @@ function setGrenacheRequest (action, extra, service) {
     const add = (extra)
       ? extra(req)
       : {}
+    if (req.file) {
+      add.file = req.file
+    }
     const args = [_.assign({}, req.query, req.body, add)]
     const query = { action, args }
     request(query, res, service)
