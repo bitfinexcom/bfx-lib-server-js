@@ -1,11 +1,11 @@
 {
-  "name": "bfx-lib-server",
+  "name": "bfx-lib-server-js",
   "version": "1.0.0",
   "description": "Shared client server utilities",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bitfinexcom/bfx-lib-server.git"
+    "url": "https://github.com/bitfinexcom/bfx-lib-server-js.git"
   },
   "scripts": {
     "build": "webpack --progress --colors --env build --define process.env.NODE_ENV='\"production\"'",

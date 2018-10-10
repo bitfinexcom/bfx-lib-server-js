@@ -17,7 +17,7 @@ const config = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
     libraryTarget: 'umd',
-    library: [ 'bfx-lib-server', '[name]' ]
+    library: [ 'bfx-lib-server-js', '[name]' ]
   },
   externals: {
     'lodash': 'lodash',
