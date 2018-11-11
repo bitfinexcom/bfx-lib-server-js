@@ -35,6 +35,8 @@ function setGrenacheRequest (action, extra, service) {
       ? extra(req)
       : {}
     if (req.file) {
+      const buffer = req.file.buffer.toString('hex')
+      req.file.buffer = buffer
       add.file = req.file
     }
     const args = [_.assign({}, req.query, req.body, add)]
