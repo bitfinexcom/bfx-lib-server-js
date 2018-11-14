@@ -20,7 +20,7 @@ function request (query, res, service) {
   query = sanitaze(query)
   const timeout = _timeout(query.action)
   peer.request(service, query, timeout, (err, data) => ((err)
-    ? res.json({ success: false, message: err.toString() })
+    ? res.json({ success: false, message: err.message })
     : res.json({ success: true, data })))
 }
 
@@ -35,6 +35,8 @@ function setGrenacheRequest (action, extra, service) {
       ? extra(req)
       : {}
     if (req.file) {
+      const buffer = req.file.buffer.toString('hex')
+      req.file.buffer = buffer
       add.file = req.file
     }
     const args = [_.assign({}, req.query, req.body, add)]
