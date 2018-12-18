@@ -1,6 +1,6 @@
 {
   "name": "bfx-lib-server-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shared client server utilities",
   "main": "index.js",
   "repository": {
@@ -12,7 +12,7 @@
     "start": "webpack --progress --colors --env dev --watch",
     "test": "NODE_ENV=test BABEL_ENV=test node_modules/tape-watch/bin/tape-watch -r babel-register ./test/*.spec.js | tap-spec",
     "test:single": "run(){ NODE_ENV=test BABEL_ENV=test node_modules/tape-watch/bin/tape-watch --require babel-polyfill -r babel-register $1 | tap-spec; }; run",
-    "postinstall": "babel -q ./src/express -d ./dist/express && copy package.json dist",
+    "postinstall": "babel ./src/express -d ./dist/express && copy package.json dist",
     "lint": "eslint src/express test --ignore-path .gitignore",
     "lintFix": "eslint src/express test --fix --ignore-path .gitignore"
   },
@@ -50,12 +50,12 @@
     "sanitizer": "^0.1.3"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.2",
-    "babel-loader": "^6.4.1",
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
     "babel-plugin-lodash": "^3.2.11",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
+    "babel-eslint": "^9.0.0",
+    "babel-loader": "^8.0.0",
     "copy": "^0.3.2",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
