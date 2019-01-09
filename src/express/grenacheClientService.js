@@ -25,7 +25,7 @@ function request (query, res, service) {
 }
 
 function _timeout (action) {
-  const timeout = uploadActions(action) ? 120000 : 10000
+  const timeout = uploadActions(action) ? 900000 : 10000
   return { timeout }
 }
 
