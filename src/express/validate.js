@@ -1,3 +1,4 @@
+'use strict'
 
 const sanitizer = require('sanitizer')
 const _ = require('lodash')
