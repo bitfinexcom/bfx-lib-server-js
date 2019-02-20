@@ -1,6 +1,8 @@
 const Grenache = require('grenache-nodejs-http')
 const Link = require('grenache-nodejs-link')
 const _ = require('lodash')
+const request = require('request')
+
 const sanitaze = require('./validate')
 const { parseTokenIp, getIp } = require('./helpers')
 
@@ -16,12 +18,22 @@ link.start()
 const peer = new Peer(link, {})
 peer.init()
 
-function request (query, res, service) {
-  query = sanitaze(query)
-  const timeout = _timeout(query.action)
-  peer.request(service, query, timeout, (err, data) => ((err)
-    ? res.json({ success: false, message: err.message })
-    : res.json({ success: true, data })))
+function requestGrc (query, res, service, pipe = false) {
+  const sQuery = sanitaze(query)
+  const timeout = _timeout(sQuery.action)
+  peer.request(service, sQuery, timeout, (err, data) => {
+    if (err) return res.json({ success: false, message: err.message })
+
+    if (pipe) {
+      const url = data && data.url
+
+      if (!url) return res.json({ success: false, message: 'Malformed data, no url' })
+
+      return request(url).pipe(res)
+    }
+
+    return res.json({ success: true, data })
+  })
 }
 
 function _timeout (action) {
@@ -29,7 +41,7 @@ function _timeout (action) {
   return { timeout }
 }
 
-function setGrenacheRequest (action, extra, service) {
+function setGrenacheRequest (action, extra, service, pipe) {
   return (req, res) => {
     const add = (extra)
       ? extra(req)
@@ -41,7 +53,7 @@ function setGrenacheRequest (action, extra, service) {
     }
     const args = [_.assign({}, req.query, req.body, add)]
     const query = { action, args }
-    request(query, res, service)
+    requestGrc(query, res, service, pipe)
   }
 }
 
@@ -56,6 +68,15 @@ function getGrenacheReqWithAuth (action, collection, service) {
   return setGrenacheRequest(action, setExtra, service)
 }
 
+function pipeGrenacheReqWithAuth (action, service) {
+  const setAuth = (req) => {
+    const auth = parseTokenIp(req)
+    return { auth }
+  }
+
+  return setGrenacheRequest(action, setAuth, service, true)
+}
+
 function getGrenacheReqWithIp (action, service) {
   const setIp = (req) => {
     const ip = getIp(req)
@@ -67,7 +88,7 @@ function getGrenacheReqWithIp (action, service) {
 function getGrenacheReq (action, args, service) {
   return (req, res) => {
     const query = { action, args }
-    request(query, res, service)
+    requestGrc(query, res, service)
   }
 }
 
@@ -75,5 +96,6 @@ module.exports = {
   setGrenacheRequest,
   getGrenacheReqWithAuth,
   getGrenacheReqWithIp,
+  pipeGrenacheReqWithAuth,
   getGrenacheReq
 }
