@@ -2,7 +2,11 @@ const requestIp = require('request-ip')
 
 function parseTokenIp (req) {
   const ip = requestIp.getClientIp(req)
-  const { token, auth } = req.headers
+
+  const token = (req && req.headers && req.headers.token) ||
+    (req && req.query && req.query.token)
+  const { auth } = req.headers
+  
   if (token) {
     return [token, { ip }]
   }
