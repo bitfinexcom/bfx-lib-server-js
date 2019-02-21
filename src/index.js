@@ -1,7 +1,7 @@
-import express from 'express'
+'use strict'
 
+import express from 'express'
 
 export default {
   express
 }
-

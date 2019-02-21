@@ -1,3 +1,5 @@
+'use strict'
+
 const Grenache = require('grenache-nodejs-http')
 const Link = require('grenache-nodejs-link')
 const _ = require('lodash')
