@@ -6,7 +6,7 @@ function parseTokenIp (req) {
   const token = (req && req.headers && req.headers.token) ||
     (req && req.query && req.query.token)
   const { auth } = req.headers
-  
+
   if (token) {
     return [token, { ip }]
   }
