@@ -39,7 +39,7 @@ function requestGrc (query, res, service, pipe = false) {
 }
 
 function _timeout (action) {
-  const timeout = uploadActions(action) ? 900000 : 10000
+  const timeout = uploadActions(action) ? 900000 : 30000
   return { timeout }
 }
 
