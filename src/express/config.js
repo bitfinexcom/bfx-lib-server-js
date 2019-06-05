@@ -19,6 +19,7 @@ if (!conf) {
 }
 
 const grape = conf.grape
+const sanitize = conf.sanitize === false ? conf.sanitize : true
 
 const fileSystem = () => conf.listen_socket && fs.chmodSync(conf.listen_socket, '0777')
 
@@ -33,6 +34,7 @@ const uploadActions = (action) => {
 module.exports = {
   serveStatic,
   grape,
+  sanitize,
   fileSystem,
   listen,
   uploadActions
