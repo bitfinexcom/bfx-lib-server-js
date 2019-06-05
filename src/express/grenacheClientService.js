@@ -8,7 +8,7 @@ const request = require('request')
 const sanitaze = require('./validate')
 const { parseTokenIp, getIp } = require('./helpers')
 
-const { grape, uploadActions } = require('./config')
+const { grape, uploadActions, sanitize } = require('./config')
 
 const Peer = Grenache.PeerRPCClient
 
@@ -21,7 +21,7 @@ const peer = new Peer(link, {})
 peer.init()
 
 function requestGrc (query, res, service, pipe = false) {
-  const sQuery = sanitaze(query)
+  const sQuery = sanitize ? sanitaze(query) : query
   const timeout = _timeout(sQuery.action)
   peer.request(service, sQuery, timeout, (err, data) => {
     if (err) return res.json({ success: false, message: err.message })
