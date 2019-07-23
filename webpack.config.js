@@ -9,7 +9,7 @@ const config = {
   bail: true,
   // devtool: 'source-map',
   entry: {
-    bfx-server-lib: path.join(__dirname, 'src/index.js'),
+    'bfx-server-lib': path.join(__dirname, 'src/index.js'),
     // functions
     express: path.join(__dirname, 'src/express/index.js'),
   },
@@ -21,6 +21,7 @@ const config = {
   },
   externals: {
     'lodash': 'lodash',
+    'fs': 'fs',
   },
   module: {
     rules: [
