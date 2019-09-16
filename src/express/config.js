@@ -21,9 +21,10 @@ if (!conf) {
 const grape = conf.grape
 const sanitize = conf.sanitize === false ? conf.sanitize : true
 
-const fileSystem = () => conf.listen_socket && fs.chmodSync(conf.listen_socket, '0777')
+const listenSocket = process.env.EXPRESS_LISTEN_SOCKET || conf.listen_socket
+const fileSystem = () => listenSocket && fs.chmodSync(listenSocket, '0777')
 
-const listen = conf.listen_socket ? conf.listen_socket : conf.listen_port
+const listen = listenSocket || conf.listen_port
 const serveStatic = conf.serve_static
 
 const uploadActions = (action) => {
