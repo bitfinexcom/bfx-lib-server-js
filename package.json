@@ -45,6 +45,7 @@
     "babel-plugin-transform-regenerator": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "grenache-nodejs-http": "^0.7.6",
+    "grenache-nodejs-link": "^0.7.10",
     "lodash": "^4.17.15",
     "request": "^2.88.0",
     "request-ip": "^2.0.2",
