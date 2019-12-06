@@ -12,13 +12,30 @@ const { grape, uploadActions, sanitize } = require('./config')
 
 const Peer = Grenache.PeerRPCClient
 
-const link = new Link({
-  grape: grape
-})
-link.start()
-
+const link = new Link({ grape })
 const peer = new Peer(link, {})
-peer.init()
+
+let started = false
+
+function start (cb = () => {}) {
+  if (!started) {
+    started = true
+    link.start()
+    peer.init()
+  }
+
+  cb()
+}
+
+function stop (cb = () => {}) {
+  if (started) {
+    started = false
+    link.stop()
+    peer.stop()
+  }
+
+  cb()
+}
 
 function requestGrc (query, res, service, pipe = false) {
   const sQuery = sanitize ? sanitaze(query) : query
@@ -94,10 +111,14 @@ function getGrenacheReq (action, args, service) {
   }
 }
 
+start()
+
 module.exports = {
   setGrenacheRequest,
   getGrenacheReqWithAuth,
   getGrenacheReqWithIp,
   pipeGrenacheReqWithAuth,
-  getGrenacheReq
+  getGrenacheReq,
+  start,
+  stop
 }
