@@ -1,6 +1,6 @@
 {
   "name": "bfx-lib-server-js",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Shared client server utilities",
   "main": "index.js",
   "repository": {
@@ -48,6 +48,7 @@
     "fs": "0.0.1-security",
     "grenache-nodejs-http": "^0.7.6",
     "lodash": "^4.17.15",
+    "lru": "^3.1.0",
     "net": "^1.0.2",
     "request": "^2.88.0",
     "request-ip": "^2.0.2",

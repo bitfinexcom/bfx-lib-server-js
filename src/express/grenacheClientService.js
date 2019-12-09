@@ -4,7 +4,9 @@ const Grenache = require('grenache-nodejs-http')
 const Link = require('grenache-nodejs-link')
 const _ = require('lodash')
 const request = require('request')
+const LRU = require('lru')
 
+const cache = new LRU({ maxAge: 3600000 })
 const sanitaze = require('./validate')
 const { parseTokenIp, getIp } = require('./helpers')
 
@@ -35,6 +37,22 @@ function stop (cb = () => {}) {
   }
 
   cb()
+}
+
+function checkAuthToken (req, service = 'rest:core:user') {
+  const auth = parseTokenIp(req)
+  const strAuth = JSON.stringify(auth)
+  const mem = cache.get(strAuth)
+  if (mem) return JSON.parse(mem)
+
+  return new Promise((resolve, reject) => {
+    const query = { action: 'checkAuthToken', args: auth }
+    peer.request(service, query, 30000, (err, data) => {
+      if (err) return reject(err)
+      cache.set(strAuth, JSON.stringify(data))
+      return resolve(data)
+    })
+  })
 }
 
 function requestGrc (query, res, service, pipe = false) {
@@ -114,6 +132,7 @@ function getGrenacheReq (action, args, service) {
 start()
 
 module.exports = {
+  checkAuthToken,
   setGrenacheRequest,
   getGrenacheReqWithAuth,
   getGrenacheReqWithIp,
