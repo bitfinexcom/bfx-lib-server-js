@@ -1,11 +1,11 @@
 'use strict'
 
-import config from './config'
-import grenacheClientService from './grenacheClientService'
-import helpers from './helpers'
-import validate from './validate'
+const config = require('./config')
+const grenacheClientService = require('./grenacheClientService')
+const helpers = require('./helpers')
+const validate = require('./validate')
 
-export default {
+module.exports = {
   config,
   grenacheClientService,
   helpers,
