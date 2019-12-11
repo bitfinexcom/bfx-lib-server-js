@@ -1,13 +1,7 @@
 'use strict'
 
-import config from './config'
-import grenacheClientService from './grenacheClientService'
-import helpers from './helpers'
-import validate from './validate'
+const express = require('../../express')
 
-export default {
-  config,
-  grenacheClientService,
-  helpers,
-  validate
-}
+console.log('src folder is removed in v2, please fix bfx-lib-js server requires')
+
+module.exports = express

@@ -2,7 +2,7 @@
 
 'use strict'
 const assert = require('assert')
-const validate = require('../src/express/validate')
+const validate = require('../express/validate')
 
 describe('xss', () => {
   it('sanitizes elements', () => {
@@ -30,14 +30,14 @@ describe('xss', () => {
     const q = { '</script>a': 'foo' }
     const res = validate(q)
 
-    assert.deepStrictEqual(res, { 'a': 'foo' })
+    assert.deepStrictEqual(res, { a: 'foo' })
   })
 
   it('handles objecsts nested in arrays', () => {
     const q = [{ '</script>a': 'foo' }]
     const res = validate(q)
 
-    assert.deepStrictEqual(res, [{ 'a': 'foo' }])
+    assert.deepStrictEqual(res, [{ a: 'foo' }])
   })
 
   it('handles nested queries', () => {
