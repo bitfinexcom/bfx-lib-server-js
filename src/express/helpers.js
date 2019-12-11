@@ -1,29 +1,7 @@
-const requestIp = require('request-ip')
+'use strict'
 
-function parseTokenIp (req) {
-  const ip = requestIp.getClientIp(req)
+const helpers = require('../../express/helpers')
 
-  const token = (req && req.headers && req.headers.token) ||
-    (req && req.query && req.query.token)
-  const { auth } = req.headers
+console.log('src folder is removed in v2, please fix bfx-lib-js server requires')
 
-  if (token) {
-    return [token, { ip }]
-  }
-  let authObject = {}
-  try {
-    if (auth) {
-      authObject = JSON.parse(auth)
-    }
-  } catch (e) {
-    console.error(e)
-  }
-  authObject.ip = ip
-  return authObject
-}
-
-function getIp (req) {
-  return requestIp.getClientIp(req)
-}
-
-module.exports = { parseTokenIp, getIp }
+module.exports = helpers
