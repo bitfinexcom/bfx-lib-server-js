@@ -8,11 +8,7 @@
     "url": "https://github.com/bitfinexcom/bfx-lib-server-js.git"
   },
   "scripts": {
-    "build": "webpack --progress --colors --env build --define process.env.NODE_ENV='\"production\"'",
-    "start": "webpack --progress --colors --env dev --watch",
-    "test": "NODE_ENV=test BABEL_ENV=test node_modules/tape-watch/bin/tape-watch -r babel-register ./test/*.spec.js | tap-spec",
-    "test:single": "run(){ NODE_ENV=test BABEL_ENV=test node_modules/tape-watch/bin/tape-watch --require babel-polyfill -r babel-register $1 | tap-spec; }; run",
-    "postinstall": "babel ./src/express -d ./dist/express && copy package.json dist",
+    "test": "mocha",
     "lint": "eslint src/express test --ignore-path .gitignore",
     "lintFix": "eslint src/express test --fix --ignore-path .gitignore"
   },
@@ -39,40 +35,16 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-plugin-transform-regenerator": "^6.24.1",
-    "babel-preset-es2015": "^6.24.1",
-    "copy": "^0.3.2",
-    "fs": "0.0.1-security",
     "grenache-nodejs-http": "^0.7.6",
     "lodash": "^4.17.15",
     "lru": "^3.1.0",
-    "net": "^1.0.2",
     "request": "^2.88.0",
     "request-ip": "^2.0.2",
     "sanitizer": "^0.1.3",
     "tls": "0.0.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.1.6",
-    "@babel/preset-env": "^7.1.6",
-    "babel-eslint": "^9.0.0",
-    "babel-loader": "^8.0.0",
-    "babel-plugin-lodash": "^3.2.11",
     "eslint": "^4.19.1",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-config-standard": "^7.0.0",
-    "eslint-loader": "^1.7.1",
-    "eslint-plugin-import": "^2.12.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-react": "^7.9.1",
-    "eslint-plugin-standard": "^2.0.1",
-    "mocha": "^5.2.0",
-    "webpack": "^4.15.1",
-    "webpack-cli": "^3.3.6"
+    "mocha": "^5.2.0"
   }
 }
