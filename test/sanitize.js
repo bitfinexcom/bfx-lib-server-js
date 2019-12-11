@@ -30,14 +30,14 @@ describe('xss', () => {
     const q = { '</script>a': 'foo' }
     const res = validate(q)
 
-    assert.deepStrictEqual(res, { 'a': 'foo' })
+    assert.deepStrictEqual(res, { a: 'foo' })
   })
 
   it('handles objecsts nested in arrays', () => {
     const q = [{ '</script>a': 'foo' }]
     const res = validate(q)
 
-    assert.deepStrictEqual(res, [{ 'a': 'foo' }])
+    assert.deepStrictEqual(res, [{ a: 'foo' }])
   })
 
   it('handles nested queries', () => {
