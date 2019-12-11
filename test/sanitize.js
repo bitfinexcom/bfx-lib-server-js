@@ -2,7 +2,7 @@
 
 'use strict'
 const assert = require('assert')
-const validate = require('../src/express/validate')
+const validate = require('../express/validate')
 
 describe('xss', () => {
   it('sanitizes elements', () => {
