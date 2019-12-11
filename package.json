@@ -9,8 +9,8 @@
   },
   "scripts": {
     "test": "mocha",
-    "lint": "eslint src/express test --ignore-path .gitignore",
-    "lintFix": "eslint src/express test --fix --ignore-path .gitignore"
+    "lint": "standard",
+    "lintFix": "standard --fix"
   },
   "keywords": [],
   "authors": [
@@ -44,7 +44,7 @@
     "tls": "0.0.1"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
+    "standard": "^14.3.1",
     "mocha": "^5.2.0"
   }
 }
