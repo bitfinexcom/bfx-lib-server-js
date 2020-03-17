@@ -5,6 +5,7 @@ const Link = require('grenache-nodejs-link')
 const _ = require('lodash')
 const request = require('request')
 const LRU = require('lru')
+const stringify = require('csv-stringify')
 
 const cache = new LRU({ maxAge: 3600000 })
 const sanitaze = require('./validate')
@@ -55,22 +56,36 @@ function checkAuthToken (req, service = 'rest:core:user') {
   })
 }
 
-function requestGrc (query, res, service, pipe = false) {
+function requestGrc (query, res, service, special) {
   const sQuery = sanitize ? sanitaze(query) : query
   const timeout = _timeout(sQuery.action)
   peer.request(service, sQuery, timeout, (err, data) => {
     if (err) return res.json({ success: false, message: err.message })
 
-    if (pipe) {
-      const url = data && data.url
-
-      if (!url) return res.json({ success: false, message: 'Malformed data, no url' })
-
-      return request(url).pipe(res)
-    }
-
+    if (special) return _specialReq(data, res, special)
     return res.json({ success: true, data })
   })
+}
+
+function _specialReq (data, res, special) {
+  if (special.pipe) return _pipeReq(data, res)
+  if (special.csv) return _csvReq(data, res, special.csv)
+  // Shouldt reach this response, added just in case
+  return res.json({ success: false, message: 'WRONG_SPECIAL_RES' })
+}
+
+function _pipeReq (data, res) {
+  const url = data && data.url
+
+  if (!url) return res.json({ success: false, message: 'Malformed data, no url' })
+
+  return request(url).pipe(res)
+}
+
+function _csvReq (data, res, name) {
+  res.setHeader('Content-Type', 'text/csv')
+  res.setHeader('Content-Disposition', `attachment; filename="${name}.csv"`)
+  return stringify(data).pipe(res)
 }
 
 function _timeout (action) {
@@ -78,7 +93,7 @@ function _timeout (action) {
   return { timeout }
 }
 
-function setGrenacheRequest (action, extra, service, pipe) {
+function setGrenacheRequest (action, extra, service, special) {
   return (req, res) => {
     const add = (extra)
       ? extra(req)
@@ -90,7 +105,7 @@ function setGrenacheRequest (action, extra, service, pipe) {
     }
     const args = [_.assign({}, req.query, req.body, add)]
     const query = { action, args }
-    requestGrc(query, res, service, pipe)
+    requestGrc(query, res, service, special)
   }
 }
 
@@ -111,7 +126,17 @@ function pipeGrenacheReqWithAuth (action, service) {
     return { auth }
   }
 
-  return setGrenacheRequest(action, setAuth, service, true)
+  return setGrenacheRequest(action, setAuth, service, { pipe: true })
+}
+
+function csvGrenacheReqWithAuth (action, service) {
+  return (req, res) => {
+    const auth = parseTokenIp(req)
+    const args = [_.assign({}, req.query, req.body, { auth })]
+    const csv = args.filename || `export-${new Date()}`
+    const query = { action, args }
+    requestGrc(query, res, service, { csv })
+  }
 }
 
 function getGrenacheReqWithIp (action, service) {
@@ -136,6 +161,7 @@ module.exports = {
   setGrenacheRequest,
   getGrenacheReqWithAuth,
   getGrenacheReqWithIp,
+  csvGrenacheReqWithAuth,
   pipeGrenacheReqWithAuth,
   getGrenacheReq,
   start,
