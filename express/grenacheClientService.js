@@ -133,7 +133,7 @@ function csvGrenacheReqWithAuth (action, service) {
   return (req, res) => {
     const auth = parseTokenIp(req)
     const args = [_.assign({}, req.query, req.body, { auth })]
-    const csv = args.filename || `export-${new Date()}`
+    const csv = args[0].filename || `export-${new Date()}`
     const query = { action, args }
     requestGrc(query, res, service, { csv })
   }
