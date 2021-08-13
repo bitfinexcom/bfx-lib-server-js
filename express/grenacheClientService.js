@@ -60,11 +60,20 @@ function requestGrc (query, res, service, special) {
   const sQuery = sanitize ? sanitaze(query) : query
   const timeout = _timeout(sQuery.action)
   peer.request(service, sQuery, timeout, (err, data) => {
-    if (err) return res.json({ success: false, message: err.message })
+    if (err) return _handleError(res, err)
 
     if (special) return _specialReq(data, res, special)
     return res.json({ success: true, data })
   })
+}
+
+function _handleError (res, err) {
+  try {
+    const { status = 400, message } = JSON.parse(err.message)
+    return res.status(status).json({ success: false, message })
+  } catch (e) {
+    return res.json({ success: false, message: err.message })
+  }
 }
 
 function _specialReq (data, res, special) {
