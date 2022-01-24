@@ -6,6 +6,7 @@ const _ = require('lodash')
 const request = require('request')
 const LRU = require('lru')
 const stringify = require('csv-stringify')
+const { Readable } = require('stream')
 
 const cache = new LRU({ maxAge: 3600000 })
 const sanitaze = require('./validate')
@@ -70,6 +71,7 @@ function requestGrc (query, res, service, special) {
 function _specialReq (data, res, special) {
   if (special.pipe) return _pipeReq(data, res)
   if (special.csv) return _csvReq(data, res, special.csv)
+  if (special.buffer) return _bufferRes(data, res, special.buffer)
   // Shouldt reach this response, added just in case
   return res.json({ success: false, message: 'WRONG_SPECIAL_RES' })
 }
@@ -80,6 +82,26 @@ function _pipeReq (data, res) {
   if (!url) return res.json({ success: false, message: 'Malformed data, no url' })
 
   return request(url).pipe(res)
+}
+
+function _bufferRes (data, res, bufferName) {
+  const { contentType, buffer, fileName = bufferName } = data
+  if (contentType) {
+    res.setHeader('Content-Type', contentType)
+  }
+
+  if (fileName) {
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`)
+  }
+
+  const arrayBuffer = buffer.type === 'Buffer' ? buffer.data : buffer
+
+  return new Readable({
+    read() {
+      this.push(Buffer.from(arrayBuffer));
+      this.push(null);
+    }
+  }).pipe(res)
 }
 
 function _csvReq (data, res, name) {
@@ -118,6 +140,15 @@ function getGrenacheReqWithAuth (action, collection, service) {
       : { auth }
   }
   return setGrenacheRequest(action, setExtra, service)
+}
+
+function bufferGrenacheReqWithAuth (action, service) {
+  const setAuth = (req) => {
+    const auth = parseTokenIp(req)
+    return { auth }
+  }
+
+  return setGrenacheRequest(action, setAuth, service, { buffer: `export-${new Date()}` })
 }
 
 function pipeGrenacheReqWithAuth (action, service) {
@@ -163,6 +194,7 @@ module.exports = {
   getGrenacheReqWithIp,
   csvGrenacheReqWithAuth,
   pipeGrenacheReqWithAuth,
+  bufferGrenacheReqWithAuth,
   getGrenacheReq,
   start,
   stop
