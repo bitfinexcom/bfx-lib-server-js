@@ -97,9 +97,9 @@ function _bufferRes (data, res, bufferName) {
   const arrayBuffer = buffer.type === 'Buffer' ? buffer.data : buffer
 
   return new Readable({
-    read() {
-      this.push(Buffer.from(arrayBuffer));
-      this.push(null);
+    read () {
+      this.push(Buffer.from(arrayBuffer))
+      this.push(null)
     }
   }).pipe(res)
 }
@@ -196,6 +196,7 @@ module.exports = {
   pipeGrenacheReqWithAuth,
   bufferGrenacheReqWithAuth,
   getGrenacheReq,
+  requestGrc,
   start,
   stop
 }
