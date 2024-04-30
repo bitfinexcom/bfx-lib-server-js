@@ -185,6 +185,18 @@ function getGrenacheReq (action, args, service) {
   }
 }
 
+function sendGrcRequestPlain (service, action, args, cb) {
+  const query = { action, args }
+  const sQuery = sanitize ? sanitaze(query) : query
+  const timeout = _timeout(sQuery.action)
+
+  peer.request(service, sQuery, timeout, (err, data) => {
+    if (err) return cb(err)
+
+    return cb(null, data)
+  })
+}
+
 start()
 
 module.exports = {
@@ -198,5 +210,7 @@ module.exports = {
   getGrenacheReq,
   requestGrc,
   start,
-  stop
+  stop,
+  getIp,
+  sendGrcRequestPlain
 }
