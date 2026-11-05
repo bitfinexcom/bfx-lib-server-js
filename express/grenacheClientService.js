@@ -49,7 +49,7 @@ function checkAuthToken (req, service = 'rest:core:user') {
 
   return new Promise((resolve, reject) => {
     const query = { action: 'checkAuthToken', args: auth }
-    peer.request(service, query, 30000, (err, data) => {
+    peer.request(service, query, { timeout: 30000 }, (err, data) => {
       if (err) return reject(err)
       cache.set(strAuth, JSON.stringify(data))
       return resolve(data)

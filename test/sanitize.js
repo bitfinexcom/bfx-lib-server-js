@@ -1,49 +1,47 @@
-/* eslint-env mocha */
-
 'use strict'
-const assert = require('assert')
+const test = require('brittle')
 const validate = require('../express/validate')
 
-describe('xss', () => {
-  it('sanitizes elements', () => {
+test('xss', (t) => {
+  t.test('sanitizes elements', (t) => {
     const q = '</script>a'
     const res = validate(q)
 
-    assert.strictEqual(res, 'a')
+    t.is(res, 'a')
   })
 
-  it('sanitizes arrays', () => {
+  t.test('sanitizes arrays', (t) => {
     const q = [0, '</script>a']
     const res = validate(q)
 
-    assert.deepStrictEqual(res, [0, 'a'])
+    t.alike(res, [0, 'a'])
   })
 
-  it('sanitizes objects', () => {
+  t.test('sanitizes objects', (t) => {
     const q = { 0: 'foo', bar: '</script>a' }
     const res = validate(q)
 
-    assert.deepStrictEqual(res, { 0: 'foo', bar: 'a' })
+    t.alike(res, { 0: 'foo', bar: 'a' })
   })
 
-  it('sanitizes object keys', () => {
+  t.test('sanitizes object keys', (t) => {
     const q = { '</script>a': 'foo' }
     const res = validate(q)
 
-    assert.deepStrictEqual(res, { a: 'foo' })
+    t.alike(res, { a: 'foo' })
   })
 
-  it('handles objecsts nested in arrays', () => {
+  t.test('handles objecsts nested in arrays', (t) => {
     const q = [{ '</script>a': 'foo' }]
     const res = validate(q)
 
-    assert.deepStrictEqual(res, [{ a: 'foo' }])
+    t.alike(res, [{ a: 'foo' }])
   })
 
-  it('handles nested queries', () => {
+  t.test('handles nested queries', (t) => {
     const q = { foo: { bar: { baz: ['</script>a'] } } }
     const res = validate(q)
 
-    assert.deepStrictEqual(res, { foo: { bar: { baz: ['a'] } } })
+    t.alike(res, { foo: { bar: { baz: ['a'] } } })
   })
 })
