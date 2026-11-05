@@ -3,7 +3,7 @@
 const Grenache = require('grenache-nodejs-http')
 const Link = require('grenache-nodejs-link')
 const _ = require('lodash')
-const request = require('request')
+const fetch = require('node-fetch')
 const LRU = require('lru')
 const stringify = require('csv-stringify')
 const { Readable } = require('stream')
@@ -81,7 +81,12 @@ function _pipeReq (data, res) {
 
   if (!url) return res.json({ success: false, message: 'Malformed data, no url' })
 
-  return request(url).pipe(res)
+  return fetch(url, { compress: false })
+    .then((upstream) => {
+      res.writeHead(upstream.status, upstream.headers.raw())
+      upstream.body.pipe(res)
+    })
+    .catch((err) => res.json({ success: false, message: err.message }))
 }
 
 function _bufferRes (data, res, bufferName) {
