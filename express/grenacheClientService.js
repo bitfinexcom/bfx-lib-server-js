@@ -3,7 +3,7 @@
 const Grenache = require('grenache-nodejs-http')
 const Link = require('grenache-nodejs-link')
 const _ = require('lodash')
-const request = require('request')
+const fetch = require('node-fetch')
 const LRU = require('lru')
 const stringify = require('csv-stringify')
 const { Readable } = require('stream')
@@ -49,7 +49,7 @@ function checkAuthToken (req, service = 'rest:core:user') {
 
   return new Promise((resolve, reject) => {
     const query = { action: 'checkAuthToken', args: auth }
-    peer.request(service, query, 30000, (err, data) => {
+    peer.request(service, query, { timeout: 30000 }, (err, data) => {
       if (err) return reject(err)
       cache.set(strAuth, JSON.stringify(data))
       return resolve(data)
@@ -81,7 +81,12 @@ function _pipeReq (data, res) {
 
   if (!url) return res.json({ success: false, message: 'Malformed data, no url' })
 
-  return request(url).pipe(res)
+  return fetch(url, { compress: false })
+    .then((upstream) => {
+      res.writeHead(upstream.status, upstream.headers.raw())
+      upstream.body.pipe(res)
+    })
+    .catch((err) => res.json({ success: false, message: err.message }))
 }
 
 function _bufferRes (data, res, bufferName) {
